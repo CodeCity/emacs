@@ -1,4 +1,4 @@
-;;;; Aaron Arlotti
+;;;; Aaron
 ;;;; .emacs file - Windows
 ;;;; Revision: 2016-03-02
 
