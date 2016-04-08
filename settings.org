@@ -1,0 +1,44 @@
+#+Title: Aaron - Emacs Settings
+
+Emacs settings in Org Mode. 
+
+* Packages
+** auto-pair
+#+BEGIN_SRC emacs-lisp
+(use-package autopair
+  :if(window-system)
+  :ensure t)
+  :config
+  (autopair-global-mode)
+#+END_SRC
+
+** erc 
+#+BEGIN_SRC emacs-lisp
+(use-package erc)
+#+END_SRC
+
+** evil
+#+BEGIN_SRC emacs-lisp
+(use-package evil
+  :config
+  (evil-mode 1))
+#+END_SRC
+
+** isend-mode
+#+BEGIN_SRC emacs-lisp
+(use-package isend-mode)
+#+END_SRC
+
+** git
+#+BEGIN_SRC emacs-lisp
+(use-package git)
+#+END_SRC
+
+** powerline
+#+BEGIN_SRC emacs-lisp
+(use-package powerline-center-theme
+  :config
+  (setq powerline-default-separator 'wave))
+#+END_SRC
+
+
