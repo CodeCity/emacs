@@ -140,8 +140,8 @@
 ;; personal info
 
 (setq
- user-mail-address "aaronarlotti@gmail.com"
- user-full-name    "Aaron Arlotti")
+ user-mail-address "emailaddress"
+ user-full-name    "fullname")
 
 ;; sending email
 (require 'smtpmail)
