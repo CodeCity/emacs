@@ -1,0 +1,449 @@
+#+Title: Aaron - Emacs Settings
+
+Emacs settings were written in Org Mode. 
+* General 
+General modifications
+** allows for single space sentences in prose.
+
+#+BEGIN_SRC emacs-lisp
+(setq sentence-end-double-space nil)
+#+END_SRC
+
+** auto-refresh all buffers
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode t)
+
+#+END_SRC
+** better font
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(font . "Courier Prime Code-10.0"))
+
+#+END_SRC
+** close this buffer
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x k") 'kill-this-buffer)
+
+
+#+END_SRC
+** change cursor - no blink
+
+#+BEGIN_SRC emacs-lisp
+(blink-cursor-mode 0)
+(add-to-list 'default-frame-alist '(cursor-color . "white"))
+
+#+END_SRC
+
+** change title of emacs
+
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format "Emacs")
+
+#+END_SRC
+** remove bars and startup message
+
+#+BEGIN_SRC emacs-lisp
+(when window-system
+  (menu-bar-mode 1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1))
+
+(setq inhibit-startup-message t)
+(setq inhibit-startup-screen t) ;; Prevent GNU Emacs window from starting
+(setq initial-scratch-message "Hello Mr. Arlotti. Would you like to play a game?")
+
+#+END_SRC
+** send git password
+
+#+BEGIN_SRC emacs-lisp
+(setenv "GIT_ASKPASS" "git-gui--askpass")
+(global-set-key (kbd "C-x g") 'magit-status)
+
+#+END_SRC
+
+** settings for look and feel
+
+#+BEGIN_SRC emacs-lisp
+(ido-mode)
+(show-paren-mode)
+(winner-mode t)
+
+#+END_SRC
+
+** start Emacs maximized
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+#+END_SRC
+
+** stop using the minibuffer if you are in the minibuffer.
+
+#+BEGIN_SRC emacs-lisp
+(defun stop-using-minibuffer ()
+  "kill the minibuffer"
+  (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
+    (abort-recursive-edit)))
+
+(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
+
+#+END_SRC
+
+* Packages
+Specific packages and modifications to packages. 
+** auto-pair
+
+#+BEGIN_SRC emacs-lisp
+(use-package autopair
+  :if(window-system)
+  :ensure t)
+  :config
+  (autopair-global-mode)
+#+END_SRC
+
+** csharp-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package csharp-mode
+  :mode "\\.cs$"
+  :config
+  (add-hook 'csharp-mode-hook 'work-style))
+  
+#+END_SRC
+** erc 
+
+#+BEGIN_SRC emacs-lisp
+(use-package erc)
+#+END_SRC
+
+** evil
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil
+	:ensure t
+	:config
+	(evil-mode 1))
+
+#+END_SRC
+
+** fountain
+
+#+BEGIN_SRC emacs-lisp
+(use-package fountain-mode
+  :mode "\\.fountain$"
+  :config (add-hook 'fountain-mode-hook 'turn-on-olivetti-mode))
+ 
+ #+END_SRC
+
+** helm
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package helm
+  :ensure t
+  :bind ("M-x" . helm-M-x)
+  :init
+  (progn
+  (require 'helm-config)
+  (helm-mode 1)))
+
+#+END_SRC
+
+** ivy-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :ensure t
+  :diminish ivy-mode
+  :config
+  (ivy-mode 1)
+  (bind-key "C-c C-r" 'ivy-resume))
+
+#+END_SRC
+
+** magit
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x g") 'magit-status)
+
+#+END_SRC
+
+** markdown-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+#+END_SRC
+
+** olivetti-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package olivetti
+	:ensure olivetti
+    :config
+    (progn
+      (setf olivetti-body-width 100)
+      (visual-line-mode)))
+
+#+END_SRC
+
+** org
+   
+#+BEGIN_SRC emacs-lisp
+
+(use-package org
+  :mode ("\\.org$" . org-mode)
+  :bind (
+         ("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         ("C-c b" . org-iswitchb))
+  :init
+  :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+    '((python . t)
+      (perl . t)
+      (emacs-lisp . t)
+      ))
+  (progn 
+    (setq org-hide-emphasis-markers t)
+    (setq org-agenda-files (list "~/Documents/AASync/ORG/AaronArlotti.org"))
+    (setq org-default-notes-file '("~/Documents/AASync/ORG/notes.org"))
+    (setq org-todo-keywords
+          '((sequence "TODO" "|" "NEXT" "DONE")))
+
+    (setq org-capture-templates
+          '(("c" "Sandbox CALL" entry (file+datetree "~/Documents/AASync/ORG/SandboxLog.org")
+	         "* TODO  %?\nSCHEDULED: %T" :clock-in t)
+	        ("s" "Sandbox TODO" entry (file+headline "~/Documents/AASync/ORG/SandboxLog.org" "URGENT TASKS")
+	         "* TODO %?\n\%u" t)
+            ("p" "Personal TODO" entry (file+headline "~/Documents/AASync/ORG/AaronArlotti.org" "PERSONAL TASKS")
+	         "* TODO %?" t)
+            ("t" "Writing TODO" entry (file+headline "~/Documents/AASync/WRITING/BOOKS/2024/2024-Draft-1.org" "Research")
+             "* TODO %?\n ")
+            ("a" "AM-Journal" entry (file+datetree "~/Documents/AASync/ORG/journal/journal.org")
+             "* OVERALL: %?\n* GOALS:\n* NEXT: " 
+             :empty-lines 1)
+            ("j" "PM-Journal" entry (file+datetree "~/Documents/AASync/ORG/journal/journal.org")
+             "* OVERALL: %?\n* ACCOMPLISHMENTS:\n* NEXT: " 
+             :empty-lines 1)
+             ))))
+
+
+    (setq org-refile-targets '(("~/Documents/AASync/ORG/Revamp2017.org" :maxlevel . 3)))
+    (setq org-refile-allow-creating-parent-nodes 'confirm)
+
+(use-package org-ac
+  :ensure t
+  :init (progn
+  (require 'org-ac)
+  (org-ac/config-default)))
+
+(use-package org-bullets
+  :ensure t
+  :commands (org-bullets-mode)
+  :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(use-package evil-org
+	:init
+	(add-hook 'org-mode-hook 'evil-org-mode))
+
+(use-package org-indent
+  :ensure org
+  :bind ("C-c t o" . org-indent-mode)
+  :init (add-hook 'org-mode-hook #'org-indent-mode))
+  ;; :diminish org-indent-mode))
+
+(find-file "~/Documents/AASync/ORG/AaronArlotti.org")
+
+(use-package org-journal
+  :ensure t
+  :init
+  :bind ("C-c C-j" . org-journal-new-entry)
+  :config
+  (setq org-journal-dir "~/AASync/ORG/journal/")
+  (setq org-journal-date-format  "#+TITLE: Journal Entry - %Y-%b-%d (%A)\n*Overall:\n*I Want To-Did Accomplish:\n*Tasks:\n*")
+  (setq org-journal-time-format "")
+  (add-hook 'org-journal-mode 'visual-line-mode))
+
+(font-lock-add-keywords 'org-mode
+                        '(("^ +\\([-*]\\) "
+                           (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+(setq org-completion-use-ido t)
+(add-hook 'org-mode-hook 'org-indent-mode)
+
+#+END_SRC
+
+** org-alert
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-alert
+  :ensure t
+  :disabled t
+  :config (org-alert-enable))
+
+#+END_SRC
+
+** pandoc-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package pandoc-mode
+  :config
+  (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
+  (add-hook 'org-mode-hook 'pandoc-mode)
+  (add-hook 'markdown-mode-hook 'pandoc-mode))
+
+#+END_SRC
+
+** powerline
+
+#+BEGIN_SRC emacs-lisp
+(use-package powerline
+  :config
+  (powerline-center-evil-theme))
+
+#+END_SRC
+
+** powershell
+
+#+BEGIN_SRC emacs-lisp
+(use-package powershell
+  :mode ("\\.ps[dm]?1\\'" . powershell-mode))
+
+#+END_SRC
+
+** projectile
+
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :diminish projectile-mode
+  :init
+  (setq projectile-keymap-prefix (kbd "C-c C-p"))
+  :config
+  (projectile-global-mode))
+
+#+END_SRC
+
+** yasnippet
+
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :config
+  (yas-reload-all))
+
+#+END_SRC
+
+* Programming
+General settings for all programming. 
+** auto load linum mode
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode 'linum-mode)
+
+#+END_SRC
+
+* Themes
+Themes not in melpa 
+** forest-blue
+#+BEGIN_SRC emacs-lisp
+(load "C:\\Users\\Aaron\\.emacs.d\\plugins\\forest-blue-emacs-master\\forest-blue-theme.el")
+(load-theme 'forest-blue)
+
+#+END_SRC
+
+* Language Specific Settings
+** Python
+
+*** elpy
+
+#+BEGIN_SRC emacs-lisp
+(elpy-enable)
+(elpy-use-ipython "C:\\Users\\aaron\\Anaconda3\\python")
+
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+(defun elpy-shell-send-region-or-buffer (&optional arg)
+  "Send the active region or the buffer to the Python shell.                    
+
+;; If there is an active region, send that. Otherwise, send the                    
+whole buffer.                                                                   
+
+;; In Emacs 24.3 and later, without prefix argument, this will                     
+;; escape the Python idiom of if __name__ == '__main__' to be false                
+;; to avoid accidental execution of code. With prefix argument, this               
+;; code is executed."
+  (interactive "P")
+  ;; Ensure process exists                                                      
+  (elpy-shell-get-or-create-process)
+  (let ((if-main-regex "^if +__name__ +== +[\"']__main__[\"'] *:")
+        (has-if-main nil))
+    (if (region-active-p)
+        (let ((region (elpy--region-without-indentation
+                       (region-beginning) (region-end))))
+          (setq has-if-main (string-match if-main-regex region))
+          (python-shell-send-string region))
+      (save-excursion
+        (goto-char (point-min))
+        (setq has-if-main (re-search-forward if-main-regex nil t)))
+      (python-shell-send-buffer arg))
+    (display-buffer (process-buffer (elpy-shell-get-or-create-process)))
+    (when has-if-main
+      (message (concat "Removed if __main__ == '__main__' construct, "
+                       "use a prefix argument to evaluate.")))))
+
+(global-set-key (kbd "<f8>") (kbd "C-u C-c C-c"))
+
+#+END_SRC
+
+*** py-autopep8
+
+#+BEGIN_SRC emacs-lisp
+
+(require 'py-autopep8)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+
+#+END_SRC
+
+*** restclient
+#+BEGIN_SRC emacs-lisp
+(use-package restclient
+    :defer t
+    :mode ("\\.http\\'" . restclient-mode))
+
+#+END_SRC
+
+* Custom Functions
+** writing prose
+
+#+BEGIN_SRC emacs-lisp
+(defun time-to-write ()
+   "Start olivetti mode, set the width to 120, turn on spell-check."
+   (interactive)
+     (unless olivetti-mode (olivetti-mode 1))
+     (olivetti-set-width 120)
+     (visual-line-mode 1)
+     (auto-complete-mode -1)
+
+(add-hook 'olivetti-mode-hook 'time-to-write))
+
+#+END_SRC
+
+** styling for csharp
+
+#+BEGIN_SRC emacs-lisp
+(defun work-style ()
+  (interactive)
+  (ggtags-mode)
+  (set-fill-column 90))
+
+#+END_SRC
