@@ -1,6 +1,5 @@
 #+Title: Aaron - Emacs Settings
 
-Emacs settings were written in Org Mode. 
 * General 
 General modifications
 ** allows for single space sentences in prose.
@@ -94,6 +93,12 @@ General modifications
 Specific packages and modifications to packages. 
 ** auto-pair
 
+=======
+Emacs settings in Org Mode. 
+
+* Packages
+** auto-pair
+>>>>>>> origin/master
 #+BEGIN_SRC emacs-lisp
 (use-package autopair
   :if(window-system)
@@ -102,6 +107,7 @@ Specific packages and modifications to packages.
   (autopair-global-mode)
 #+END_SRC
 
+<<<<<<< HEAD
 ** csharp-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -111,13 +117,14 @@ Specific packages and modifications to packages.
   (add-hook 'csharp-mode-hook 'work-style))
   
 #+END_SRC
-** erc 
 
+** erc 
 #+BEGIN_SRC emacs-lisp
 (use-package erc)
 #+END_SRC
 
 ** evil
+<<<<<<< HEAD
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil
