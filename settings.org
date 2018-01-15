@@ -91,7 +91,7 @@ General modifications
 
 * Packages
 ** auto-pair
->>>>>>> origin/master
+
 #+BEGIN_SRC emacs-lisp
 (use-package autopair
   :if(window-system)
@@ -100,7 +100,6 @@ General modifications
   (autopair-global-mode)
 #+END_SRC
 
-<<<<<<< HEAD
 ** csharp-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -112,12 +111,12 @@ General modifications
 #+END_SRC
 
 ** erc 
+
 #+BEGIN_SRC emacs-lisp
 (use-package erc)
 #+END_SRC
 
 ** evil
-<<<<<<< HEAD
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil
