@@ -90,13 +90,6 @@ General modifications
 #+END_SRC
 
 * Packages
-Specific packages and modifications to packages. 
-** auto-pair
-
-=======
-Emacs settings in Org Mode. 
-
-* Packages
 ** auto-pair
 >>>>>>> origin/master
 #+BEGIN_SRC emacs-lisp
