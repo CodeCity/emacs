@@ -1,32 +1,51 @@
 #+Title: Aaron - Emacs Settings
 
-* General 
+* INTRODUCTION
 
-This file is used in conjunction with the .emacs file.
- 
-General modifications
-** allows for single space sentences in prose.
+This file is used in conjunction with the .emacs file. I still use .emacs to load the nuts and bolts and settings.org to handle everything else. It is just easier to reference. 
 
-#+BEGIN_SRC emacs-lisp
-(setq sentence-end-double-space nil)
-#+END_SRC
+* Under the hood 
 
 ** auto-refresh all buffers
 #+BEGIN_SRC emacs-lisp
 (global-auto-revert-mode t)
 
 #+END_SRC
-** better font
 
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Courier Prime Code-10.0"))
-
-#+END_SRC
 ** close this buffer
 
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
 
+
+#+END_SRC
+
+** send git password
+
+#+BEGIN_SRC emacs-lisp
+(setenv "GIT_ASKPASS" "git-gui--askpass")
+(global-set-key (kbd "C-x g") 'magit-status)
+
+#+END_SRC
+
+** stop using the minibuffer if you are in the minibuffer.
+
+#+BEGIN_SRC emacs-lisp
+(defun stop-using-minibuffer ()
+  "kill the minibuffer"
+  (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
+    (abort-recursive-edit)))
+
+(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
+
+#+END_SRC
+
+* Appearance  
+ 
+** better font
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(font . "Courier Prime Code-10.0"))
 
 #+END_SRC
 ** change cursor - no blink
@@ -37,12 +56,17 @@ General modifications
 
 #+END_SRC
 
-** change title of emacs
+** change title of emacs to match buffer 
 
 #+BEGIN_SRC emacs-lisp
-(setq frame-title-format "Emacs")
+(setq frame-title-format
+      '("" invocation-name " - "
+        (:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
 
 #+END_SRC
+
 ** remove bars and startup message
 
 #+BEGIN_SRC emacs-lisp
@@ -56,13 +80,6 @@ General modifications
 (setq initial-scratch-message "Hello Mr. Arlotti. Would you like to play a game?")
 
 #+END_SRC
-** send git password
-
-#+BEGIN_SRC emacs-lisp
-(setenv "GIT_ASKPASS" "git-gui--askpass")
-(global-set-key (kbd "C-x g") 'magit-status)
-
-#+END_SRC
 
 ** settings for look and feel
 
@@ -72,23 +89,17 @@ General modifications
 (winner-mode t)
 
 #+END_SRC
+** split vertical by default 
 
-** start Emacs maximized
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+BEGIN_SRC 
+(setq split-height-threshold nil)
 
 #+END_SRC
 
-** stop using the minibuffer if you are in the minibuffer.
+** start emacs maximized
 
 #+BEGIN_SRC emacs-lisp
-(defun stop-using-minibuffer ()
-  "kill the minibuffer"
-  (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
-    (abort-recursive-edit)))
-
-(add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 #+END_SRC
 
@@ -129,15 +140,6 @@ General modifications
 
 #+END_SRC
 
-** fountain
-
-#+BEGIN_SRC emacs-lisp
-(use-package fountain-mode
-  :mode "\\.fountain$"
-  :config (add-hook 'fountain-mode-hook 'turn-on-olivetti-mode))
- 
- #+END_SRC
-
 ** helm
 
 #+BEGIN_SRC emacs-lisp
@@ -167,7 +169,18 @@ General modifications
 ** magit
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x g") 'magit-status)
+(use-package magit
+    :ensure t
+    :defer t
+    :bind (("C-x g" . magit-status))
+    :config 
+    (progn
+    (defadvice magit-status (around magit-fullscreen activate)
+      (window-configuration-to-register :magit-fullscreen)
+       ad-do-it
+       (delete-other-windows))))
+    :END:
+ 
 
 #+END_SRC
 
@@ -312,6 +325,8 @@ General modifications
   :config
   (powerline-center-evil-theme))
 
+(use-package powerline-evil)
+
 #+END_SRC
 
 ** powershell
@@ -334,6 +349,19 @@ General modifications
 
 #+END_SRC
 
+** smex
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package smex
+    :defer t
+    :bind (("M-x" . smex)
+           ("M-X" . smex-major-mode-commands))
+    :config
+    (progn
+     (smex-initialize)))
+ 
+#+END_SRC
 ** yasnippet
 
 #+BEGIN_SRC emacs-lisp
@@ -349,6 +377,36 @@ General settings for all programming.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode 'linum-mode)
+
+#+END_SRC
+* Writing
+
+I write a lot so I've configured Emacs for prose, screenwriting, novels, etc. 
+
+** fountain
+
+for screenwriting
+
+#+BEGIN_SRC emacs-lisp
+(use-package fountain-mode
+  :mode "\\.fountain$"
+  :config (add-hook 'fountain-mode-hook 'turn-on-olivetti-mode))
+ 
+ #+END_SRC
+
+** writing prose
+
+#+BEGIN_SRC emacs-lisp
+(defun time-to-write ()
+   "Start olivetti mode, set the width to 120, turn on spell-check."
+   (interactive)
+     (unless olivetti-mode (olivetti-mode 1))
+     (olivetti-set-width 120)
+     (visual-line-mode 1)
+     (auto-complete-mode -1)
+     (setq sentence-end-double-space nil) ;;allows single space in prose
+
+(add-hook 'olivetti-mode-hook 'time-to-write))
 
 #+END_SRC
 
@@ -425,21 +483,6 @@ whole buffer.
 #+END_SRC
 
 * Custom Functions
-** writing prose
-
-#+BEGIN_SRC emacs-lisp
-(defun time-to-write ()
-   "Start olivetti mode, set the width to 120, turn on spell-check."
-   (interactive)
-     (unless olivetti-mode (olivetti-mode 1))
-     (olivetti-set-width 120)
-     (visual-line-mode 1)
-     (auto-complete-mode -1)
-
-(add-hook 'olivetti-mode-hook 'time-to-write))
-
-#+END_SRC
-
 ** styling for csharp
 
 #+BEGIN_SRC emacs-lisp

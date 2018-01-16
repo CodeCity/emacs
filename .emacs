@@ -1,14 +1,8 @@
 ;;;; Aaron Arlotti
 ;;;; .emacs file - Windows
-;;;; Revision: 2016-08-15
-;;;; Revision: 2017-12-21
-
-;;-------------------------------------------
-;;-----------Packages------------------------
-;;-------------------------------------------
+;;;; Revision: 2018-01-15
 
 ;; Repositories
-
 
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
@@ -20,10 +14,6 @@
 					 ("gnu" . "http://elpa.gnu.org/packages/")
 					 ("org" . "http://orgmode.org/elpa/"))))
 
-
-
-;; ("elpy" . "https://jorgenschaefer.github.io/packages/")
-;; ("marmalade" . "https://marmalade-repo.org/packages/")
 
   (package-initialize)
 (unless (package-installed-p 'use-package)
@@ -41,13 +31,7 @@
 (defvar myPackages
   '(better-defaults
     ein          ; Emacs ipython notebook
-    elpy         ; python for emacs
-    flycheck     ; python syntax
-    magit        ; for git
-    py-autopep8  ; configures python correctly
-    
     ))
-
 
 (mapc #'(lambda (package)
           (unless (package-installed-p package)
@@ -66,13 +50,6 @@
   "Load file in current user's cofiguration directory"
   (load-file (expand-file-name file user-init-dir)))
   
-;; smex - autocomplete
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-
-;; Split vertical by default
-(setq split-height-threshold nil)
-
 ;; load additional el files
 (org-babel-load-file (concat user-emacs-directory "settings.org"))
 
@@ -126,7 +103,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (diffview spike-theme ahungry-theme doom darcula-theme projectile evil writeroom-mode weechat web-server weather-metno wc-mode wanderlust w3m use-package tangotango-theme syntax-subword switch-window soothe-theme solarized-theme smex sauron py-autopep8 powershell powerline perlcritic perlbrew perl6-mode perl-completion pdf-tools pandoc-mode pandoc ox-pandoc org2blog org-journal org-bullets org-ac olivetti offlineimap ob-restclient nlinum mustache moe-theme mew material-theme markdown-mode list-packages-ext latex-preview-pane key-chord journal jedi isend-mode imenu-list helm-pydoc helm-orgcard helm-git helm-bibtex grandshell-theme google-maps git fountain-mode flymake-python-pyflakes flycheck evil-org evil-magit evil-leader epic elpy ein doom-themes diminish darkmine-theme csharp-mode counsel-projectile calfw buffer-stack better-defaults autopair auto-capitalize atom-dark-theme alert alect-themes ahk-mode afternoon-theme)))
+    (powerline-evil diffview spike-theme ahungry-theme doom darcula-theme projectile evil writeroom-mode weechat web-server weather-metno wc-mode wanderlust w3m use-package tangotango-theme syntax-subword switch-window soothe-theme solarized-theme smex sauron py-autopep8 powershell powerline perlcritic perlbrew perl6-mode perl-completion pdf-tools pandoc-mode pandoc ox-pandoc org2blog org-journal org-bullets org-ac olivetti offlineimap ob-restclient nlinum mustache moe-theme mew material-theme markdown-mode list-packages-ext latex-preview-pane key-chord journal jedi isend-mode imenu-list helm-pydoc helm-orgcard helm-git helm-bibtex grandshell-theme google-maps git fountain-mode flymake-python-pyflakes flycheck evil-org evil-magit evil-leader epic elpy ein doom-themes diminish darkmine-theme csharp-mode counsel-projectile calfw buffer-stack better-defaults autopair auto-capitalize atom-dark-theme alert alect-themes ahk-mode afternoon-theme)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
