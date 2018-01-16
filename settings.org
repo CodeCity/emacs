@@ -1,6 +1,9 @@
 #+Title: Aaron - Emacs Settings
 
 * General 
+
+This file is used in conjunction with the .emacs file.
+ 
 General modifications
 ** allows for single space sentences in prose.
 
