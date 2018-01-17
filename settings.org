@@ -264,6 +264,11 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
     (setq org-refile-targets '(("~/Documents/AASync/ORG/Revamp2017.org" :maxlevel . 3)))
     (setq org-refile-allow-creating-parent-nodes 'confirm)
 
+    (setq org-todo-keyword-faces
+          (quote (("TODO" :foreground "red" :weight bold)
+                  ("DONE" :foreground "forest green" normal)
+                  ("NEXT" :foreground "blue" :weigh bold))))
+
 (use-package org-ac
   :ensure t
   :init (progn
