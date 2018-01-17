@@ -2,35 +2,34 @@
 
 * INTRODUCTION
 
-This file is used in conjunction with the .emacs file. I still use .emacs to load the nuts and bolts and settings.org to handle everything else. It is just easier to reference. 
+This file is used in conjunction with the .emacs file. I still use .emacs to load the nuts and bolts and settings.org to handle everything else. It is just easier to reference.
 
-* Under the hood 
+* Under the hood
 
-** auto-refresh all buffers
+** various tweaks
+
 #+BEGIN_SRC emacs-lisp
+
+;; allow pasting outsde of Emacs
+(setq x-select-enable-clipboard 1)
+
+;; auto-refresh all buffers
 (global-auto-revert-mode t)
 
-#+END_SRC
-
-** close this buffer
-
-#+BEGIN_SRC emacs-lisp
+;; close this buffer
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
 
+;;delete white-spaces after before saving
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-#+END_SRC
-
-** send git password
-
-#+BEGIN_SRC emacs-lisp
+;; send git password
 (setenv "GIT_ASKPASS" "git-gui--askpass")
 (global-set-key (kbd "C-x g") 'magit-status)
 
-#+END_SRC
+;; set kill ring to be large.
+(setq kill-ring-max 500)
 
-** stop using the minibuffer if you are in the minibuffer.
-
-#+BEGIN_SRC emacs-lisp
+;; stop using the minibuffer if you are in the minibuffer.
 (defun stop-using-minibuffer ()
   "kill the minibuffer"
   (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
@@ -39,15 +38,14 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
 (add-hook 'mouse-leave-buffer-hook 'stop-using-minibuffer)
 
 #+END_SRC
+* Appearance
 
-* Appearance  
- 
 ** better font
 
 #+BEGIN_SRC emacs-lisp
-   
+
 (set-face-attribute 'default nil :family "Consolas" :height 100)
-   
+
 #+END_SRC
 ** change cursor - no blink
 
@@ -57,7 +55,7 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
 
 #+END_SRC
 
-** change title of emacs to match buffer 
+** change title of emacs to match buffer
 
 #+BEGIN_SRC emacs-lisp
 (setq frame-title-format
@@ -65,6 +63,16 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
         (:eval (if (buffer-file-name)
                    (abbreviate-file-name (buffer-file-name))
                  "%b"))))
+
+#+END_SRC
+
+** nicer scrolling
+
+#+BEGIN_SRC emacs-lisp
+
+(setq scroll-margin 0
+      scroll-conservatively 100000
+      scroll-preserve-screen-position 1)
 
 #+END_SRC
 
@@ -90,9 +98,9 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
 (winner-mode t)
 
 #+END_SRC
-** split vertical by default 
+** split vertical by default
 
-#+BEGIN_SRC 
+#+BEGIN_SRC
 (setq split-height-threshold nil)
 
 #+END_SRC
@@ -122,10 +130,10 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
   :mode "\\.cs$"
   :config
   (add-hook 'csharp-mode-hook 'work-style))
-  
+
 #+END_SRC
 
-** erc 
+** erc
 
 #+BEGIN_SRC emacs-lisp
 (use-package erc)
@@ -174,14 +182,14 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
     :ensure t
     :defer t
     :bind (("C-x g" . magit-status))
-    :config 
+    :config
     (progn
     (defadvice magit-status (around magit-fullscreen activate)
       (window-configuration-to-register :magit-fullscreen)
        ad-do-it
        (delete-other-windows))))
     :END:
- 
+
 
 #+END_SRC
 
@@ -211,7 +219,7 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
 #+END_SRC
 
 ** org
-   
+
 #+BEGIN_SRC emacs-lisp
 
 (use-package org
@@ -228,7 +236,7 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
       (perl . t)
       (emacs-lisp . t)
       ))
-  (progn 
+  (progn
     (setq org-hide-emphasis-markers t)
     (setq org-agenda-files (list "~/Documents/AASync/ORG/AaronArlotti.org"))
     (setq org-default-notes-file '("~/Documents/AASync/ORG/notes.org"))
@@ -245,10 +253,10 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
             ("t" "Writing TODO" entry (file+headline "~/Documents/AASync/WRITING/BOOKS/2024/2024-Draft-1.org" "Research")
              "* TODO %?\n ")
             ("a" "AM-Journal" entry (file+datetree "~/Documents/AASync/ORG/journal/journal.org")
-             "* OVERALL: %?\n* GOALS:\n* NEXT: " 
+             "* OVERALL: %?\n* GOALS:\n* NEXT: "
              :empty-lines 1)
             ("j" "PM-Journal" entry (file+datetree "~/Documents/AASync/ORG/journal/journal.org")
-             "* OVERALL: %?\n* ACCOMPLISHMENTS:\n* NEXT: " 
+             "* OVERALL: %?\n* ACCOMPLISHMENTS:\n* NEXT: "
              :empty-lines 1)
              ))))
 
@@ -323,10 +331,8 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
 
 #+BEGIN_SRC emacs-lisp
 (use-package powerline
-  :config
-  (powerline-center-evil-theme))
-
-(use-package powerline-evil)
+  :init
+  (powerline-default-theme))
 
 #+END_SRC
 
@@ -361,7 +367,7 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
     :config
     (progn
      (smex-initialize)))
- 
+
 #+END_SRC
 ** yasnippet
 
@@ -373,7 +379,7 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
 #+END_SRC
 
 * Programming
-General settings for all programming. 
+General settings for all programming.
 ** auto load linum mode
 
 #+BEGIN_SRC emacs-lisp
@@ -382,7 +388,7 @@ General settings for all programming.
 #+END_SRC
 * Writing
 
-I write a lot so I've configured Emacs for prose, screenwriting, novels, etc. 
+I write a lot so I've configured Emacs for prose, screenwriting, novels, etc.
 
 ** fountain
 
@@ -391,8 +397,8 @@ for screenwriting
 #+BEGIN_SRC emacs-lisp
 (use-package fountain-mode
   :mode "\\.fountain$"
-  :config (add-hook 'fountain-mode-hook 'turn-on-olivetti-mode))
- 
+  :config (add-hook 'fountain-mode-hook 'time-to-write))
+
  #+END_SRC
 
 ** writing prose
@@ -412,7 +418,7 @@ for screenwriting
 #+END_SRC
 
 * Themes
-Themes not in melpa 
+Themes not in melpa
 ** forest-blue
 #+BEGIN_SRC emacs-lisp
 (load "~\\.emacs.d\\plugins\\forest-blue-emacs-master\\forest-blue-theme.el")
@@ -422,6 +428,15 @@ Themes not in melpa
 
 * Language Specific Settings
 ** Python
+*** ein - IPython Notebook
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+    :ensure t
+    :defer t)
+
+#+END_SRC
 
 *** elpy
 
@@ -434,17 +449,17 @@ Themes not in melpa
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
 (defun elpy-shell-send-region-or-buffer (&optional arg)
-  "Send the active region or the buffer to the Python shell.                    
+  "Send the active region or the buffer to the Python shell.
 
-;; If there is an active region, send that. Otherwise, send the                    
-whole buffer.                                                                   
+;; If there is an active region, send that. Otherwise, send the
+whole buffer.
 
-;; In Emacs 24.3 and later, without prefix argument, this will                     
-;; escape the Python idiom of if __name__ == '__main__' to be false                
-;; to avoid accidental execution of code. With prefix argument, this               
+;; In Emacs 24.3 and later, without prefix argument, this will
+;; escape the Python idiom of if __name__ == '__main__' to be false
+;; to avoid accidental execution of code. With prefix argument, this
 ;; code is executed."
   (interactive "P")
-  ;; Ensure process exists                                                      
+  ;; Ensure process exists
   (elpy-shell-get-or-create-process)
   (let ((if-main-regex "^if +__name__ +== +[\"']__main__[\"'] *:")
         (has-if-main nil))

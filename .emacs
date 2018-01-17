@@ -5,51 +5,45 @@
 ;; Repositories
 
 (require 'package)
+
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-				(not (gnutls-available-p))))
-   (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
-(add-to-list 'package-archives (cons "melpa" url) t))
-(when (>= emacs-major-version 24)
-	(add-to-list 'package-archives '(("melpa" . "http://melpa.org/packages/")
-					 ("gnu" . "http://elpa.gnu.org/packages/")
-					 ("org" . "http://orgmode.org/elpa/"))))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;; Official MELPA Mirror, in case necessary.
+  ;;(add-to-list 'package-archives (cons "melpa-mirror" (concat proto "://www.mirrorservice.org/sites/melpa.org/packages/")) t)
+  (if (< emacs-major-version 24)
+      ;; For important compatibility libraries like cl-lib
+      (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))
+    (unless no-ssl
+      ;; Force SSL for GNU ELPA
+      (setcdr (assoc "gnu" package-archives) "https://elpa.gnu.org/packages/"))))
 
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 
-  (package-initialize)
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(package-initialize)
 
 (eval-when-compile
   (require 'use-package))
 (require 'diminish)
 (require 'bind-key)
+(setq use-package-always-ensure t)
 
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-(defvar myPackages
-  '(better-defaults
-    ein          ; Emacs ipython notebook
-    ))
-
-(mapc #'(lambda (package)
-          (unless (package-installed-p package)
-            (package-install package)))
-      myPackages)
+(unless package-archive-contents
+       (package-refresh-contents))
 
 (defconst user-init-dir
   (cond ((boundp 'user-emacs-directory)
          user-emacs-directory)
         ((boundp 'user-init-directory)
          user-init-directory)
-        (t "C:\\Users\\Aaron\\.emacs.d\\")))
+        (t "~\\.emacs.d\\")))
 
 (defun load-user-file (file)
   (interactive "f")
   "Load file in current user's cofiguration directory"
   (load-file (expand-file-name file user-init-dir)))
-  
+
 ;; load additional el files
 (org-babel-load-file (concat user-emacs-directory "settings.org"))
 
