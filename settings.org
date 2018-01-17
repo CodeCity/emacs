@@ -45,8 +45,9 @@ This file is used in conjunction with the .emacs file. I still use .emacs to loa
 ** better font
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Courier Prime Code-10.0"))
-
+   
+(set-face-attribute 'default nil :family "Consolas" :height 100)
+   
 #+END_SRC
 ** change cursor - no blink
 
@@ -414,7 +415,7 @@ for screenwriting
 Themes not in melpa 
 ** forest-blue
 #+BEGIN_SRC emacs-lisp
-(load "C:\\Users\\Aaron\\.emacs.d\\plugins\\forest-blue-emacs-master\\forest-blue-theme.el")
+(load "~\\.emacs.d\\plugins\\forest-blue-emacs-master\\forest-blue-theme.el")
 (load-theme 'forest-blue)
 
 #+END_SRC
@@ -426,7 +427,7 @@ Themes not in melpa
 
 #+BEGIN_SRC emacs-lisp
 (elpy-enable)
-(elpy-use-ipython "C:\\Users\\aaron\\Anaconda3\\python")
+(elpy-use-ipython "~\\Anaconda3\\python")
 
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
